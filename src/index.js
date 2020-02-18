@@ -93,6 +93,15 @@ export function subscribe(cb) {
   return slaxWrapper.subscribe(cb);
 }
 
+export function createAction(type) {
+  return function(payload){
+    return {
+      type,
+      payload
+    }
+  }
+}
+
 
 function ConnectComponent ({ store$, mapStateToProps, mapDispatchToProps,  Children }) {
   const [ storeStateProps, setStoreStateProps ] = React.useState({});
