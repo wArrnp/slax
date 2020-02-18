@@ -21,7 +21,7 @@ class SlaxStore {
   }
 
   // Store의 값을 변경하고자 할 때 실행하는 함수
-  // 값을 변경하고자 하는 행위를 Action이라고 하며 Action은 Type이 필수로 정의되어 있어야 한다.
+  // Action은 Type이 필수로 정의되어 있어야 한다.
   // Action에 파라미터가 존재할 경우 파라미터를 함께 넣어준다.
   // Action Function은 함수이며 Action Type을 미리 정의해야 한다.
   // Reducer를 통해서 액션으로 인하여 바뀌는 스토어를 정의할 수 있다.
