@@ -21,10 +21,9 @@ class SlaxStore {
   }
 
   // Store의 값을 변경하고자 할 때 실행하는 함수
-  // Action은 Type이 필수로 정의되어 있어야 한다.
-  // Action에 파라미터가 존재할 경우 파라미터를 함께 넣어준다.
-  // Action Function은 함수이며 Action Type을 미리 정의해야 한다.
-  // Reducer를 통해서 액션으로 인하여 바뀌는 스토어를 정의할 수 있다.
+  // Action Function을 통해서 리듀서에 값을 전달한다.
+  // 전달할 값에 Action type이 정의되어 있어야 하며 추가 파라미터는 선택이다.
+  // 리듀서는 Type을 통해서 값을 변경항 형식을 정의하고 리턴한다.
   dispatch(action) {
     const prevValue = this.store$.getValue();
     const actionResult = Object.keys(this.reducers)
