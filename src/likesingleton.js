@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-// import React from 'react';
+import React from 'react';
 // // import ReactDom from 'react-dom';
 import mergeObjectDeeper from './util';
 import { StoreInitializeError } from './util/errors';
@@ -23,7 +23,7 @@ const Slax = (function() {
   let _reducers = {};
 
   function getProcessedReducers(reducers, reduceFunction) {
-    return Object.keys(_reducers).reduce(reduceFunction, {});
+    return Object.keys(reducers).reduce(reduceFunction, {});
   }
   
   function dispatch(action) {
@@ -40,26 +40,21 @@ const Slax = (function() {
     _store$.next(newValue)
   }
 
+  function ConnectComponent ({ store$, mapStateToProps, mapDispatchToProps,  Children }) {
+    const [ storeState, setStoreState ] = React.useState({});
+
+    React.useEffect(() => {
+      if(!!mapStateToProps) {
+        store$.subscribe(state => {
+          setStoreState(mapStateToProps(state));
+        })
+      }
+    },[])
+
+  return <Children {...storeState} {...mapDispatchToProps(dispatch)} dispatch={dispatch}/>
+  }
+
   return {
-    get store() {
-      if(!_store$) {
-        throw new StoreInitializeError("Store is not initialized");
-      }
-      return _store$;
-    },
-
-    get reducers() {
-      if(!_reducers) {
-        throw new StoreInitializeError("Store is not initialized");
-      }
-      return _reducers;
-    },
-
-    initialize(store, reducers) {
-      _store$ = new BehaviorSubject(store);
-      _reducers = reducers;
-    },
-
     createStore(reducers) {
       if(!!_store$) {
         throw new StoreInitializeError("Store is already initialized");
@@ -73,16 +68,9 @@ const Slax = (function() {
     },
 
 
-    connect(mapStateToProps, mapDispatchToProps) {
+    connect(mapStateToProps, mapDispatchToProps = f => f) {
       return function(Component) {
-        const [ storeState, setStoreState ] = React.useState({});
-        React.useEffect(() => {
-          _store$.subscribe(state => {
-            setStoreState(mapStateToProps(state));
-          })
-        },[])
-
-        return <Component {...storeState} {...mapDispatchToProps(dispatch)}/>
+        return <ConnectComponent store$={_store$} mapStateToProps={mapStateToProps} mapDispatchToProps={mapDispatchToProps} Children={Component}/>
       }
     }
   }
