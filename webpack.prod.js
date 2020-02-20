@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 const TerserJSPlugin = require("terser-webpack-plugin");
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
     ]
   },
 
-  // plugins: [
+  plugins: [
   //   [
   //     "@babel/plugin-transform-runtime",
   //     {
@@ -43,7 +44,12 @@ module.exports = {
   //       "useESModules": false
   //     }
   //   ]
-  // ],
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('development')
+      }
+    })
+  ],
 
   optimization: {
     minimize: true,
