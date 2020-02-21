@@ -1,6 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import React from 'react';
-// // import ReactDom from 'react-dom';
+import React, { useState, useEffect } from 'react';
 import mergeObjectDeeper from './util';
 import { StoreInitializeError } from './util/errors';
 
@@ -17,6 +16,11 @@ export function createAction(type) {
     }
   }
 }
+
+export function combineReducers(reducers) {
+  return reducers;
+}
+
 
 const Slax = (function() {
   let _store$ = null;
@@ -39,20 +43,7 @@ const Slax = (function() {
     const newValue = mergeObjectDeeper(prevValue, actionResult);
     _store$.next(newValue)
   }
-
-  function ConnectComponent ({ store$, mapStateToProps, mapDispatchToProps,  Children }) {
-    const [ storeState, setStoreState ] = React.useState({});
-
-    React.useEffect(() => {
-      if(!!mapStateToProps) {
-        store$.subscribe(state => {
-          setStoreState(mapStateToProps(state));
-        })
-      }
-    },[])
-
-  return <Children {...storeState} {...mapDispatchToProps(dispatch)} dispatch={dispatch}/>
-  }
+  
 
   return {
     createStore(reducers) {
@@ -67,15 +58,50 @@ const Slax = (function() {
       _reducers = reducers;
     },
 
-
-    connect(mapStateToProps, mapDispatchToProps = f => f) {
-      return function(Component) {
-        return <ConnectComponent store$={_store$} mapStateToProps={mapStateToProps} mapDispatchToProps={mapDispatchToProps} Children={Component}/>
+    connect(mapStateToProps, mapDispatchToProps) {
+      if(!_store$) {
+        throw new StoreInitializeError("Store is not initialized");
       }
+      
+      function createConnectHOC(Component) {
+        return function ConnectHOC() {
+          const [ storeStateProps, setStoreStateProps ] = useState({});
+          useEffect(() => store$.subscribe((state) => {
+            setStoreStateProps(mapStateToProps(state));
+          }),[])
+
+          return <Component {...storeStateProps} {...mapDispatchToProps(dispatch)}/>
+        }
+      }
+      return createConnectHOC
+    },
+
+    useSelect(mapStateToProps) {
+      if(!_store$) {
+        throw new StoreInitializeError("Store is not initialized");
+      }
+
+      const [ storeState, setStoreState ] = useState({});
+
+      useEffect(() => {
+        _store$.subscribe((state) => {
+          setStoreState(mapStateToProps(state));
+        })
+      }, [])
+
+      return storeState;
+    },
+
+    useDispatch() {
+      return dispatch;
     }
   }
 })()
 
 Slax.createAction = createAction;
-
+Slax.combineReducers = combineReducers;
+export const connect = Slax.connect;
+export const createStore = Slax.createStore;
+export const useSelect = Slax.useSelect;
+export const useDispatch = Slax.useDispatch;
 export default Slax;
