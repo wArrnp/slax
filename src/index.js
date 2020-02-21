@@ -1,5 +1,7 @@
-import Test from './example/Count';
-Test()
+import Count from './example/Count';
+import ReactDom from 'react-dom';
+import React from 'react';
+ReactDom.render(<Count />, document.getElementById('root'))
 
 // import { BehaviorSubject } from 'rxjs';
 // import React from 'react';
@@ -41,15 +43,15 @@ Test()
 
 //   // 컴포넌트와 Slax Store를 연결할 때 사용되는 함수
 //   // Slax Store의 값을 사용하거나 값을 변경하고자 할 때 필수로 사용해야한다.
-//   connect(mapStateToProps, mapDispatchToProps) {
-//     return (Component) => {
-//       return <ConnectComponent 
-//         store$={this.store$} 
-//         mapStateToProps={mapStateToProps} 
-//         mapDispatchToProps={mapDispatchToProps} 
-//         Children={Component}/>
-//     }
-//   }
+  // connect(mapStateToProps, mapDispatchToProps) {
+  //   return (Component) => {
+  //     return <ConnectComponent 
+  //       store$={this.store$} 
+  //       mapStateToProps={mapStateToProps} 
+  //       mapDispatchToProps={mapDispatchToProps} 
+  //       Children={Component}/>
+  //   }
+  // }
 // }
 
 // // 싱글톤 방식으로 개발하기 위해서 만든 Instance Wrapper
