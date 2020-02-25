@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDom from 'react-dom'
 import mergeObjectDeeper from './util';
 import { StoreInitializeError } from './util/errors';
@@ -109,7 +109,15 @@ class SlaxWrapper {
       throw new StoreInitializeError("Store is not initialized");
     }
     
-    return mapStateToProps(this.store.store$.getValue());
+    const [ storeState, setStoreState ] = useState({});
+
+    useEffect(() => {
+      this.store.store$.subscribe((state) => {
+        setStoreState(mapStateToProps(state));
+      })
+    }, [])
+
+    return storeState
   }
 
   useDispatch() {
