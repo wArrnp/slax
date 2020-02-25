@@ -77,7 +77,7 @@ const Slax = (function() {
         throw new StoreInitializeError("Store is not initialized");
       }
 
-      const [ storeState, setStoreState ] = useState({});
+      const [ storeState, setStoreState ] = useState(null);
 
       useEffect(() => {
         _store$.subscribe((state) => {
