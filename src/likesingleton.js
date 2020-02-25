@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 import React, { useState, useEffect } from 'react';
-import mergeObjectDeeper from './util';
+import { mergeObjectDeeper, getReducedValue } from './util';
 import { StoreInitializeError } from './util/errors';
 
 
@@ -26,10 +26,6 @@ const Slax = (function() {
   let _store$ = null;
   let _reducers = {};
 
-  function getProcessedReducers(reducers, reduceFunction) {
-    return Object.keys(reducers).reduce(reduceFunction, {});
-  }
-  
   function dispatch(action) {
     if(!_store$) {
       throw new StoreInitializeError("Store is not initialized");
@@ -38,7 +34,7 @@ const Slax = (function() {
     const prevValue = _store$.getValue();
 
     const reduceFunction = (acc, reducerName) => ({ ...acc, [reducerName]: _reducers[reducerName](prevValue[reducerName], action)});
-    const actionResult = getProcessedReducers(_reducers, reduceFunction);
+    const actionResult = getReducedValue(_reducers, reduceFunction);
 
     const newValue = mergeObjectDeeper(prevValue, actionResult);
     _store$.next(newValue)
@@ -53,7 +49,7 @@ const Slax = (function() {
     
       const reduceFunction = (acc, reducerName) => ({ ...acc, [reducerName]: reducers[reducerName](undefined, {type: null})});
       
-      const initialState = getProcessedReducers(reducers, reduceFunction)
+      const initialState = getReducedValue(reducers, reduceFunction)
       _store$ = new BehaviorSubject(initialState);
       _reducers = reducers;
     },
