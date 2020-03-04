@@ -56,5 +56,7 @@ module.exports = {
     minimizer: [new TerserJSPlugin({
       include: /\.min\.js$/
     })]
-  }
+  },
+  
+  devtool: 'inline-source-map',
 }
