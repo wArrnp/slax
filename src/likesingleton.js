@@ -54,17 +54,22 @@ const Slax = (function() {
       _reducers = reducers;
     },
 
-    connect(mapStateToProps, mapDispatchToProps) {
+    connect(mapStateToProps=()=>({}), mapDispatchToProps=()=>({})) {
       if(!_store$) {
         throw new StoreInitializeError("Store is not initialized");
       }
+
+      if(mapStateToProps === null) mapStateToProps = () => ({})
+      if(mapDispatchToProps === null) mapDispatchToProps = () => ({})
       
       function createConnectHOC(Component) {
         return function ConnectHOC() {
           const [ storeStateProps, setStoreStateProps ] = useState({});
-          useEffect(() => store$.subscribe((state) => {
-            setStoreStateProps(mapStateToProps(state));
-          }),[])
+          useEffect(() => {
+            _store$.subscribe((state) => {
+              setStoreStateProps(mapStateToProps(state));
+            })
+          },[])
 
           return <Component {...storeStateProps} {...mapDispatchToProps(dispatch)}/>
         }
