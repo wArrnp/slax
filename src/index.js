@@ -1,6 +1,6 @@
 import ReactDom from 'react-dom';
 import React from 'react';
-import Count from './example/Count/index.js';
+import Count from './example/ClassCount/index.js';
 
 ReactDom.render(
   <Count />,
